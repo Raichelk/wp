@@ -1,0 +1,34 @@
+variables:
+  DOCKER_TAG: $CI_COMMIT_REF_NAME
+  VERSION: $VERSION
+  STAGING_IP: "192.168.180.21"  # Replace with your staging instance IP
+  PRODUCTION_IP: "192.168.180.20"  # Replace with your production instance IP
+
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  script:
+    - echo "Building Docker images..."
+    - docker-compose build
+  only:
+    - main
+    - staging
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying to $CI_COMMIT_REF_NAME environment..."
+    - docker-compose down
+    - docker-compose up -d
+  only:
+    - main
+    - staging
+  environment:
+    name: $CI_COMMIT_REF_NAME
+    url: |
+      http://$STAGING_IP if [ "$CI_COMMIT_REF_NAME" == "staging" ]; then echo $STAGING_IP;
+      elif [ "$CI_COMMIT_REF_NAME" == "main" ]; then echo $PRODUCTION_IP;
+      fi
