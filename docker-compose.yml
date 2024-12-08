@@ -1,0 +1,42 @@
+ervices:
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wpuser
+      MYSQL_PASSWORD: asd@123
+    networks:
+      - wordpress-network
+
+  wordpress:
+    image: mijewelmj/new-wordpress-image:latest
+    container_name: wordpress-container
+    environment:
+      WORDPRESS_DB_HOST: mysql-container
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wpuser
+      WORDPRESS_DB_PASSWORD: asd@123
+    ports:
+      - "8080:8080"  # Exposing 8080 for internal Docker use, no external need
+    networks:
+      - wordpress-network
+    depends_on:
+      - mysql
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-container
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - wordpress-network
+    depends_on:
+      - wordpress
+
+networks:
+  wordpress-network:
+
