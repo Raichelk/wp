@@ -11,6 +11,11 @@ stages:
 build:
   stage: build
   image: docker/compose:latest # Use a prebuilt image with docker-compose
+  tags:
+    - job1run1
+  services:
+    - name: docker:dind
+      command: ["--tls=false"]
   script:
     - echo "Building Docker images..."
     - docker-compose build
