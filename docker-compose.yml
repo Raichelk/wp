@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   mysql:
     image: mysql:latest
@@ -9,33 +11,16 @@ services:
       MYSQL_PASSWORD: asd@123
     networks:
       - wordpress-network
+    volumes:
+      - mysql-data:/var/lib/mysql  # Persist MySQL data across restarts
 
   wordpress:
     image: mijewelmj/new-wordpress-image:latest
     container_name: wordpress-container
     environment:
-      WORDPRESS_DB_HOST: mysql-container
+      WORDPRESS_DB_HOST: mysql-container:3306  # Specify port for MySQL
       WORDPRESS_DB_NAME: wordpress
       WORDPRESS_DB_USER: wpuser
       WORDPRESS_DB_PASSWORD: asd@123
     ports:
-      - "8080:8080"  # Exposing 8080 for internal Docker use, no external need
-    networks:
-      - wordpress-network
-    depends_on:
-      - mysql
-
-  nginx:
-    image: nginx:latest
-    container_name: nginx-container
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-    networks:
-      - wordpress-network
-    depends_on:
-      - wordpress
-
-networks:
-  wordpress-network:
+      - "808
