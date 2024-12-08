@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   mysql:
     image: mysql:latest
@@ -11,14 +9,12 @@ services:
       MYSQL_PASSWORD: asd@123
     networks:
       - wordpress-network
-    volumes:
-      - mysql-data:/var/lib/mysql  # Persist MySQL data across restarts
 
   wordpress:
     image: mijewelmj/new-wordpress-image:latest
     container_name: wordpress-container
     environment:
-      WORDPRESS_DB_HOST: mysql-container:3306  # Specify port for MySQL
+      WORDPRESS_DB_HOST: mysql-container
       WORDPRESS_DB_NAME: wordpress
       WORDPRESS_DB_USER: wpuser
       WORDPRESS_DB_PASSWORD: asd@123
@@ -43,4 +39,5 @@ services:
 
 networks:
   wordpress-network:
+
 
