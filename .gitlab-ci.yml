@@ -10,6 +10,7 @@ stages:
 
 build:
   stage: build
+  image: docker/compose:latest # Use a prebuilt image with docker-compose
   script:
     - echo "Building Docker images..."
     - docker-compose build
