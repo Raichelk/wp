@@ -3,13 +3,13 @@ variables:
   VERSION: $VERSION
   STAGING_IP: "192.168.180.21"  # Replace with your staging instance IP
   PRODUCTION_IP: "192.168.180.20"  # Replace with your production instance IP
+  DOCKER_HOST: "tcp://docker:2375"
+  DOCKER_TLS_CERTDIR: ""
+
 
 stages:
   - build
   - deploy
-
-DOCKER_HOST: "tcp://docker:2375"
-DOCKER_TLS_CERTDIR: ""
 
 build:
   stage: build
