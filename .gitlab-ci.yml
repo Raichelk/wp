@@ -31,6 +31,10 @@ build:
 
 deploy:
   stage: deploy
+  image: docker/compose:latest  # Prebuilt image with docker-compose
+  services:
+    - name: docker:dind
+      command: ["--tls=false"]  # Ensure Docker Daemon is accessible
   script:
     - echo "Deploying to $CI_COMMIT_REF_NAME environment..."
     - docker-compose down
