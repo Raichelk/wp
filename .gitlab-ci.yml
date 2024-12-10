@@ -3,8 +3,8 @@ variables:
   VERSION: $VERSION
   STAGING_IP: "192.168.140.21:8080"  # Replace with your staging instance IP
   PRODUCTION_IP: "192.168.140.20:8080"  # Replace with your production instance IP
-  DOCKER_HOST: "tcp://docker:2375"
-  DOCKER_TLS_CERTDIR: ""
+#  DOCKER_HOST: "tcp://docker:2375"
+# DOCKER_TLS_CERTDIR: ""
 
 
 stages:
@@ -18,6 +18,10 @@ build:
   services:
     - name: docker:dind
       command: ["--tls=false"]
+  variables:
+    DOCKER_HOST: tcp://docker:2375  # Ensure the Docker client connects to DinD
+    DOCKER_TLS_CERTDIR: "" 
+    
   script:
     - echo "Building Docker images..."
     - docker-compose build
