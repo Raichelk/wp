@@ -14,8 +14,7 @@ stages:
 build:
   stage: build
   image: docker/compose:latest # Use a prebuilt image with docker-compose
-  tags:
-    - yy
+  
   services:
     - name: docker:dind
       command: ["--tls=false"]
