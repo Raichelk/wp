@@ -1,10 +1,10 @@
 variables:
   DOCKER_TAG: $CI_COMMIT_REF_NAME
   VERSION: $VERSION
-  STAGING_IP: "192.168.140.21:8080"  # Replace with your staging instance IP
-  PRODUCTION_IP: "192.168.140.20:8080"  # Replace with your production instance IP
-#  DOCKER_HOST: "tcp://docker:2375"
-# DOCKER_TLS_CERTDIR: ""
+  STAGING_IP: "192.168.140.21"  # Replace with your staging instance IP
+  PRODUCTION_IP: "192.168.140.20"  # Replace with your production instance IP
+  DOCKER_HOST: "tcp://docker:2375"
+  DOCKER_TLS_CERTDIR: ""
 
 
 stages:
@@ -32,7 +32,6 @@ build:
 deploy:
   stage: deploy
   script:
-    - apt-get update && apt-get install -y docker-compose
     - echo "Deploying to $CI_COMMIT_REF_NAME environment..."
     - docker-compose down
     - docker-compose up -d
@@ -45,7 +44,4 @@ deploy:
       http://$STAGING_IP if [ "$CI_COMMIT_REF_NAME" == "staging" ]; then echo $STAGING_IP;
       elif [ "$CI_COMMIT_REF_NAME" == "main" ]; then echo $PRODUCTION_IP;
       fi
-        export ENVIRONMENT_URL="http://$PRODUCTION_IP"
-      else
-        export ENVIRONMENT_URL="http://default-environment-url"
-      fi
+        
