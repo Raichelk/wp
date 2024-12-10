@@ -1,8 +1,8 @@
 variables:
   DOCKER_TAG: $CI_COMMIT_REF_NAME
   VERSION: $VERSION
-  STAGING_IP: "192.168.180.21"  # Replace with your staging instance IP
-  PRODUCTION_IP: "192.168.180.20"  # Replace with your production instance IP
+  STAGING_IP: "192.168.140.21:8080"  # Replace with your staging instance IP
+  PRODUCTION_IP: "192.168.140.20:8080"  # Replace with your production instance IP
   DOCKER_HOST: "tcp://docker:2375"
   DOCKER_TLS_CERTDIR: ""
 
