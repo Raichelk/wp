@@ -37,12 +37,10 @@ deploy:
     - staging
   environment:
     name: $CI_COMMIT_REF_NAME
-    url: $ENVIRONMENT_URL
-  before_script:
-    - |
-      if [ "$CI_COMMIT_REF_NAME" == "staging" ]; then
-        export ENVIRONMENT_URL="http://$STAGING_IP"
-      elif [ "$CI_COMMIT_REF_NAME" == "main" ]; then
+    url: |
+      http://$STAGING_IP if [ "$CI_COMMIT_REF_NAME" == "staging" ]; then echo $STAGING_IP;
+      elif [ "$CI_COMMIT_REF_NAME" == "main" ]; then echo $PRODUCTION_IP;
+      fi
         export ENVIRONMENT_URL="http://$PRODUCTION_IP"
       else
         export ENVIRONMENT_URL="http://default-environment-url"
