@@ -48,7 +48,7 @@ deploy_production:
     - echo "$PRODUCTION_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - echo "Copying files to the production server..."
-    - scp -i ~/.ssh/id_rsa -r ./docker-compose/ raichel@$PRODUCTION_IP:/home/raichel/wordpress/docker-compose/
+    - scp -i ~/.ssh/id_rsa  ./docker-compose/ raichel@$PRODUCTION_IP:/home/raichel/wordpress/docker-compose/
     - scp -i ~/.ssh/id_rsa ./nginx.conf raichel@$PRODUCTION_IP:/home/raichel/wordpress/nginx.conf
     - echo "Executing docker-compose on the production server..."
     - ssh -i ~/.ssh/id_rsa raichel@$PRODUCTION_IP << 'EOF'
