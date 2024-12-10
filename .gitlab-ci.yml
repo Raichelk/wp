@@ -1,51 +1,64 @@
-variables:
-  DOCKER_TAG: $CI_COMMIT_REF_NAME
-  VERSION: $VERSION
-  STAGING_IP: "192.168.140.21:8080" # Replace with your staging instance IP
-  PRODUCTION_IP: "192.168.140.20:8080"  # Replace with your production 
-  DOCKER_HOST: "tcp://docker:2375"
-  DOCKER_TLS_CERTDIR: ""
-
-
 stages:
-  - build
   - deploy
 
-build:
-  stage: build
-  image: docker/compose:latest # Use a prebuilt image with docker-compose
-  
-  services:
-    - name: docker:dind
-      command: ["--tls=false"]
-  variables:
-    DOCKER_HOST: tcp://docker:2375  # Ensure the Docker client connects to DinD
-    DOCKER_TLS_CERTDIR: "" 
-    
-  script:
-    - echo "Building Docker images..."
-    - docker-compose build
-  only:
-    - main
-    - staging
+variables:
+  DOCKER_IMAGE: mijewelmj/new-wordpress-image:latest
 
-deploy:
+before_script:
+  # Install Docker CLI if not available on GitLab CI/CD runner
+  - apt-get update && apt-get install -y docker.io
+
+# Deployment job for staging environment
+deploy_staging:
   stage: deploy
-  image: docker/compose:latest  # Prebuilt image with docker-compose
-  services:
-    - name: docker:dind
-      command: ["--tls=false"]  # Ensure Docker Daemon is accessible
   script:
-    - echo "Deploying to $CI_COMMIT_REF_NAME environment..."
-    - docker-compose down
-    - docker-compose up -d
+    - echo "Deploying to the staging server..."
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh  # Set correct permissions for the directory
+    - touch ~/.ssh/known_hosts  # Create the known_hosts file if it doesn't exist
+    - chmod 644 ~/.ssh/known_hosts  # Set correct permissions for the known_hosts file
+    - echo "$STAGING_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -H "$STAGING_IP" >> ~/.ssh/known_hosts 2>&1
+    - echo "Copying files to the staging server..."
+    - scp -i ~/.ssh/id_rsa -r ./docker-compose/ raichel@$STAGING_IP:/home/raichel/wordpress/docker-compose/
+    - scp -i ~/.ssh/id_rsa ./nginx.conf raichel@$STAGING_IP:/home/raichel/wordpress/nginx.conf
+    - echo "Executing docker-compose on the staging server..."
+    - ssh -i ~/.ssh/id_rsa raichel@$STAGING_IP << 'EOF'
+    - cd /home/raichel/wordpress/docker-compose/
+    - docker-compose down  # Stop any existing containers
+    - docker-compose up -d  # Start containers in detached mode
+    - EOF
   only:
-    - main
-    - staging
+    refs:
+      - staging
   environment:
-    name: $CI_COMMIT_REF_NAME
-    url: |
-      http://$STAGING_IP if [ "$CI_COMMIT_REF_NAME" == "staging" ]; then echo $STAGING_IP;
-      elif [ "$CI_COMMIT_REF_NAME" == "main" ]; then echo $PRODUCTION_IP;
-      fi
-        
+    name: staging
+  when: manual  # Set to manual to trigger deployment manually
+
+# Deployment job for production environment
+deploy_production:
+  stage: deploy
+  script:
+    - echo "Deploying to the production server..."
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh  # Set correct permissions for the directory
+    - touch ~/.ssh/known_hosts  # Create the known_hosts file if it doesn't exist
+    - chmod 644 ~/.ssh/known_hosts  # Set correct permissions for the known_hosts file
+    - echo "$PRODUCTION_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - echo "Copying files to the production server..."
+    - scp -i ~/.ssh/id_rsa -r ./docker-compose/ raichel@$PRODUCTION_IP:/home/raichel/wordpress/docker-compose/
+    - scp -i ~/.ssh/id_rsa ./nginx.conf raichel@$PRODUCTION_IP:/home/raichel/wordpress/nginx.conf
+    - echo "Executing docker-compose on the production server..."
+    - ssh -i ~/.ssh/id_rsa raichel@$PRODUCTION_IP << 'EOF'
+    - cd /home/raichel/wordpress/docker-compose/
+    - docker-compose down  # Stop any existing containers
+    - docker-compose up -d  # Start containers in detached mode
+    - EOF
+  only:
+    refs:
+      - main
+  environment:
+    name: production
+  when: manual  # Set to manual to trigger deployment manually
