@@ -55,10 +55,10 @@ deploy_production:
     # scp -o StrictHostKeyChecking=no nginx.conf raichel@$PRODUCTION_IP:/home/raichel/wordpress/
     # echo "Executing docker-compose.yml on the production server..."
     # ssh -o StrictHostKeyChecking=no raichel@$PRODUCTION_IP bash -c "'
-        cd /home/raichel/wordpress/ &&
-        docker-compose down &&
-        docker-compose up -d
-      '"
+    #    cd /home/raichel/wordpress/ &&
+    #    docker-compose down &&
+    #    docker-compose up -d
+    #  '"
 
       
   only:
