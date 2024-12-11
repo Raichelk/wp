@@ -41,10 +41,10 @@ deploy_production:
   stage: deploy
   script:
     - echo "Deploying to the production server..."
-  #  - mkdir -p ~/.ssh
-  #  - chmod 700 ~/.ssh  # Set correct permissions for the directory
-  # - touch ~/.ssh/known_hosts  # Create the known_hosts file if it doesn't exist
-  #  - chmod 644 ~/.ssh/known_hosts  # Set correct permissions for the known_hosts file
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh  # Set correct permissions for the directory
+    - touch ~/.ssh/known_hosts  # Create the known_hosts file if it doesn't exist
+    - chmod 644 ~/.ssh/known_hosts  # Set correct permissions for the known_hosts file
     - echo "$PRODUCTION_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - echo "Copying files to the production server..."
@@ -52,10 +52,10 @@ deploy_production:
     - scp  ~/.ssh/id_rsa ./nginx.conf raichel@$PRODUCTION_IP:/home/raichel/wordpress/nginx.conf
     - echo "Executing docker-compose on the production server..."
     - ssh -i ~/.ssh/id_rsa raichel@$PRODUCTION_IP << 'EOF'
-    - cd /home/raichel/wordpress/docker-compose/
-    - docker-compose down  # Stop any existing containers
-    - docker-compose up -d  # Start containers in detached mode
-    - EOF
+      cd /home/raichel/wordpress/docker-compose/
+      docker-compose down  # Stop any existing containers
+    -  docker-compose up -d  # Start containers in detached mode
+    -  EOF
   only:
     refs:
       - main
