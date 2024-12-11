@@ -49,6 +49,7 @@ deploy_production:
     #- mkdir -p ~/.ssh
     #- echo "$PRODUCTION_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     #- chmod 600 ~/.ssh/id_rsa
+    - chown -R raichel:raichel /home/raichel/wordpress
     - eval $(ssh-agent -s)
     - echo "$PRODUCTION_SSH_KEY" | ssh-add -
    # - ssh-add -l
