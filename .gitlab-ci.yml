@@ -5,60 +5,59 @@ variables:
   DOCKER_IMAGE: mijewelmj/new-wordpress-image:latest
 
 before_script:
-  # Install Docker CLI if not available on GitLab CI/CD runner
   - apt-get update && apt-get install -y docker.io
 
-# Deployment job for staging environment
 deploy_staging:
   stage: deploy
   script:
     - echo "Deploying to the staging server..."
     - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh  # Set correct permissions for the directory
-    - touch ~/.ssh/known_hosts  # Create the known_hosts file if it doesn't exist
-    - chmod 644 ~/.ssh/known_hosts  # Set correct permissions for the known_hosts file
+    - chmod 700 ~/.ssh
+    - touch ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
     - echo "$STAGING_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    - ssh-keyscan -H "$STAGING_IP" >> ~/.ssh/known_hosts 2>&1
     - echo "Copying files to the staging server..."
-    - scp -i ~/.ssh/id_rsa -r ./docker-compose/ raichel@$STAGING_IP:/home/raichel/wordpress/docker-compose/
-    - scp -i ~/.ssh/id_rsa ./nginx.conf raichel@$STAGING_IP:/home/raichel/wordpress/nginx.conf
+    - scp -i ~/.ssh/id_rsa docker-compose.yml/ mj@$STAGING_IP:/home/mj/wordpress
+    - scp -i ~/.ssh/id_rsa nginx.conf mj@$STAGING_IP:/home/mj/wordpress
     - echo "Executing docker-compose on the staging server..."
-    - ssh -i ~/.ssh/id_rsa raichel@$STAGING_IP << 'EOF'
-    - cd /home/raichel/wordpress/docker-compose/
-    - docker-compose down  # Stop any existing containers
-    - docker-compose up -d  # Start containers in detached mode
-    - EOF
+    - ssh -i ~/.ssh/id_rsa mj@$STAGING_IP bash -c "'
+        cd /home/mj/wordpress/docker-compose/ &&
+        docker-compose down &&
+        docker-compose up -d
+      '"
   only:
     refs:
       - staging
   environment:
     name: staging
-  when: manual  # Set to manual to trigger deployment manually
-
-# Deployment job for production environment
+  when: manual 
 deploy_production:
   stage: deploy
   script:
-    - echo "Deploying to the production server..."
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh  # Set correct permissions for the directory
-    - touch ~/.ssh/known_hosts  # Create the known_hosts file if it doesn't exist
-    - chmod 644 ~/.ssh/known_hosts  # Set correct permissions for the known_hosts file
-    - echo "$PRODUCTION_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - echo "Copying files to the production server..."
-    - scp -i  ~/.ssh/id_rsa  ./docker-compose/ raichel@$PRODUCTION_IP:/home/raichel/docker-compose/
-    - scp  -i ~/.ssh/id_rsa ./nginx.conf raichel@$PRODUCTION_IP:/home/raichel/wordpress/nginx.conf
-    - echo "Executing docker-compose on the production server..."
-    - ssh -i ~/.ssh/id_rsa raichel@$PRODUCTION_IP << 'EOF'
-      cd /home/raichel/wordpress/docker-compose/
-      docker-compose down  # Stop any existing containers
-    -  docker-compose up -d  # Start containers in detached mode
-    -  EOF
+    #- echo "Deploying to the production server..."
+    #- mkdir -p ~/.ssh
+    #- chmod 700 ~/.ssh
+    #- echo "$PRODUCTION_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    #- chmod 600 ~/.ssh/id_rsa
+    #- touch ~/.ssh/known_hosts
+    #- chmod 644 ~/.ssh/known_hosts
+    #- echo "Copying files to the production server..."
+    - eval $(ssh-agent -s)
+    - echo "$PRODUCTION_SSH_KEY" | ssh-add -
+    - ssh-add -l
+    - scp -vvv -o StrictHostKeyChecking=no docker-compose.yml mj@$PRODUCTION_IP:/home/mj/wordpress
+    - scp docker-compose.yml/ mj@$PRODUCTION_IP:/home/mj/wordpress
+    - scp -i ~/.ssh/id_rsa nginx.conf mj@$PRODUCTION_IP:/home/mj/wordpress
+    - echo "Executing docker-compose.yml on the production server..."
+    - ssh -i ~/.ssh/id_rsa mj@$PRODUCTION_IP bash -c "'
+        cd /home/mj/wordpress/ &&
+        docker-compose down &&
+        docker-compose up -d
+      '"
   only:
     refs:
       - main
   environment:
     name: production
-  when: manual  # Set to manual to trigger deployment manually
+  when: manual
