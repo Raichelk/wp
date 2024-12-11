@@ -25,7 +25,7 @@ deploy_staging:
     - eval $(ssh-agent -s)
     - echo "$STAGING_SSH_KEY" | ssh-add -
    # - ssh-add -l
-    - chown -R raichel:raichel /home/raichel/wordpress
+    
     - scp -o "StrictHostKeyChecking=no" docker-compose.yml raichel@$STAGING_IP:/home/raichel/wordpress
     - scp -o "StrictHostKeyChecking=no" nginx.conf raichel@$STAGING_IP:/home/raichel/wordpress
     - echo "Executing docker-compose.yml on the staging server..."
@@ -62,7 +62,8 @@ deploy_production:
    #     docker-compose down &&
    #     docker-compose up -d
    #   '"
-    -  chown -R raichel:raichel /home/raichel/wordpress  
+    
+    
     -  ssh -o "StrictHostKeyChecking=no" raichel@$PRODUCTION_IP "cd /home/raichel/wordpress && sudo docker-compose up -d"
   only:
     refs:
