@@ -18,11 +18,11 @@ deploy_staging:
     - echo "$STAGING_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - echo "Copying files to the staging server..."
-    - scp -i ~/.ssh/id_rsa docker-compose.yml/ mj@$STAGING_IP:/home/mj/wordpress
-    - scp -i ~/.ssh/id_rsa nginx.conf mj@$STAGING_IP:/home/mj/wordpress
+    - scp -i ~/.ssh/id_rsa docker-compose.yml/ raichel@$STAGING_IP:/home/raichel/wordpress
+    - scp -i ~/.ssh/id_rsa nginx.conf raichel@$STAGING_IP:/home/raichel/wordpress
     - echo "Executing docker-compose on the staging server..."
-    - ssh -i ~/.ssh/id_rsa mj@$STAGING_IP bash -c "'
-        cd /home/mj/wordpress/docker-compose/ &&
+    - ssh -i ~/.ssh/id_rsa raichel@$STAGING_IP bash -c "'
+        cd /home/raichel/wordpress/docker-compose/ &&
         docker-compose down &&
         docker-compose up -d
       '"
@@ -46,12 +46,12 @@ deploy_production:
     - eval $(ssh-agent -s)
     - echo "$PRODUCTION_SSH_KEY" | ssh-add -
     - ssh-add -l
-    - scp -vvv -o StrictHostKeyChecking=no docker-compose.yml mj@$PRODUCTION_IP:/home/mj/wordpress
-    - scp docker-compose.yml/ mj@$PRODUCTION_IP:/home/mj/wordpress
-    - scp -i ~/.ssh/id_rsa nginx.conf mj@$PRODUCTION_IP:/home/mj/wordpress
+    - scp -vvv -o StrictHostKeyChecking=no docker-compose.yml raichel@$PRODUCTION_IP:/home/raichel/wordpress
+    - scp docker-compose.yml/ raichel@$PRODUCTION_IP:/home/raichel/wordpress
+    - scp -i ~/.ssh/id_rsa nginx.conf raichel@$PRODUCTION_IP:/home/raichel/wordpress
     - echo "Executing docker-compose.yml on the production server..."
-    - ssh -i ~/.ssh/id_rsa mj@$PRODUCTION_IP bash -c "'
-        cd /home/mj/wordpress/ &&
+    - ssh -i ~/.ssh/id_rsa raichel@$PRODUCTION_IP bash -c "'
+        cd /home/raichel/wordpress/ &&
         docker-compose down &&
         docker-compose up -d
       '"
