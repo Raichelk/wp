@@ -25,6 +25,7 @@ deploy_staging:
     - eval $(ssh-agent -s)
     - echo "$STAGING_SSH_KEY" | ssh-add -
    # - ssh-add -l
+    - chown -R raichel:raichel /home/raichel/wordpress
     - scp -o "StrictHostKeyChecking=no" docker-compose.yml raichel@$STAGING_IP:/home/raichel/wordpress
     - scp -o "StrictHostKeyChecking=no" nginx.conf raichel@$STAGING_IP:/home/raichel/wordpress
     - echo "Executing docker-compose.yml on the staging server..."
@@ -51,6 +52,7 @@ deploy_production:
     - eval $(ssh-agent -s)
     - echo "$PRODUCTION_SSH_KEY" | ssh-add -
    # - ssh-add -l
+    - chown -R raichel:raichel /home/raichel/wordpress
     - scp -o "StrictHostKeyChecking=no" docker-compose.yml raichel@$PRODUCTION_IP:/home/raichel/wordpress
     - scp -o "StrictHostKeyChecking=no" nginx.conf raichel@$PRODUCTION_IP:/home/raichel/wordpress
     - echo "Executing docker-compose.yml on the production server..."
