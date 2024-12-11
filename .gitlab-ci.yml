@@ -1,71 +1,65 @@
 stages:
   - deploy
 
+image: docker:latest
+
+services:
+  - name: docker:dind
+    command: ["--tls=false"]
+
 variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
   DOCKER_IMAGE: mijewelmj/new-wordpress-image:latest
-
-
-
 
 before_script:
   - apt-get update && apt-get install -y docker.io
-
 deploy_staging:
   stage: deploy
-
-
+  tags:
+    - job30
   script:
-    - echo "Deploying to the staging server..."
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - touch ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-    - echo "$STAGING_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - echo "Copying files to the staging server..."
-    - scp -o ~/.ssh/id_rsa docker-compose.yml/ raichel@$STAGING_IP:/home/raichel/wordpress
-    - scp -o ~/.ssh/id_rsa nginx.conf raichel@$STAGING_IP:/home/raichel/wordpress
-    - echo "Executing docker-compose on the staging server..."
-    - ssh -0 ~/.ssh/id_rsa raichel@$STAGING_IP bash -c "'
-        cd /home/raichel/wordpress/docker-compose/ &&
-        docker-compose down &&
-        docker-compose up -d
-      '"
+    #- mkdir -p ~/.ssh
+    #- echo "$STAGING_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    #- chmod 600 ~/.ssh/id_rsa
+    - eval $(ssh-agent -s)
+    - echo "$STAGING_SSH_KEY" | ssh-add -
+   # - ssh-add -l
+    - scp -o "StrictHostKeyChecking=no" docker-compose.yml raichel@$STAGING_IP:/home/raichel/wordpress
+    - scp -o "StrictHostKeyChecking=no" nginx.conf raichel@$STAGING_IP:/home/raichel/wordpress
+    - echo "Executing docker-compose.yml on the staging server..."
+   # - ssh -o "StrictHostKeyChecking=no" mj@$STAGING_IP "'
+   #     cd /home/mj/wordpress/ &&
+   #     docker-compose down &&
+   #     docker-compose up -d
+   #   '"
+    -  ssh -o "StrictHostKeyChecking=no" raichel@$STAGING_IP "cd /home/raichel/wordpress && sudo docker-compose up -d"
   only:
     refs:
       - staging
   environment:
     name: staging
-  when: manual 
+
 deploy_production:
   stage: deploy
   tags:
     - job30
   script:
-    - echo "Deploying to the production server..."
-    #  mkdir -p ~/.ssh
-    #  chmod 700 ~/.ssh
-    # echo "$PRODUCTION_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
-    # chmod 600 ~/.ssh/id_rsa
-    # touch ~/.ssh/known_hosts
-    # chmod 644 ~/.ssh/known_hosts
-    #- ssh-keyscan -H $PRODUCTION_IP >> ~/.ssh/known_hosts
+    #- mkdir -p ~/.ssh
+    #- echo "$PRODUCTION_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    #- chmod 600 ~/.ssh/id_rsa
     - eval $(ssh-agent -s)
     - echo "$PRODUCTION_SSH_KEY" | ssh-add -
-    # ssh-add ~/.ssh/id_rsa
-  # - ssh-add -l
-  
-    # echo "Copying files to the production server..."
-    - scp -o StrictHostKeyChecking=no docker-compose.yml raichel@$PRODUCTION_IP:/home/raichel/wordpress/
-    - scp -o StrictHostKeyChecking=no nginx.conf raichel@$PRODUCTION_IP:/home/raichel/wordpress/
+   # - ssh-add -l
+    - scp -o "StrictHostKeyChecking=no" docker-compose.yml raichel@$PRODUCTION_IP:/home/raichel/wordpress
+    - scp -o "StrictHostKeyChecking=no" nginx.conf raichel@$PRODUCTION_IP:/home/raichel/wordpress
     - echo "Executing docker-compose.yml on the production server..."
-  #  - ssh -o StrictHostKeyChecking=no raichel@$PRODUCTION_IP bash -c "'
-      #  cd /home/raichel/wordpress/ &&
-      #  docker-compose down &&
-      #  docker-compose up -d
+   # - ssh -o "StrictHostKeyChecking=no" mj@$PRODUCTION_IP "'
+   #     cd /home/mj/wordpress/ &&
+   #     docker-compose down &&
+   #     docker-compose up -d
+   #   '"
     -  ssh -o "StrictHostKeyChecking=no" raichel@$PRODUCTION_IP "cd /home/raichel/wordpress && sudo docker-compose up -d"
-
-      
   only:
     refs:
       - main
