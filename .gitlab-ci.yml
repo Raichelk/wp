@@ -40,7 +40,7 @@ deploy_staging:
 deploy_production:
   stage: deploy
   tags:
-    - job1run1
+    - job30
   script:
     - echo "Deploying to the production server..."
     - mkdir -p ~/.ssh
