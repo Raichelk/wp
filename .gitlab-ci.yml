@@ -21,10 +21,10 @@ deploy_staging:
     - echo "$STAGING_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - echo "Copying files to the staging server..."
-    - scp -i ~/.ssh/id_rsa docker-compose.yml/ raichel@$STAGING_IP:/home/raichel/wordpress
-    - scp -i ~/.ssh/id_rsa nginx.conf raichel@$STAGING_IP:/home/raichel/wordpress
+    - scp -o ~/.ssh/id_rsa docker-compose.yml/ raichel@$STAGING_IP:/home/raichel/wordpress
+    - scp -o ~/.ssh/id_rsa nginx.conf raichel@$STAGING_IP:/home/raichel/wordpress
     - echo "Executing docker-compose on the staging server..."
-    - ssh -i ~/.ssh/id_rsa raichel@$STAGING_IP bash -c "'
+    - ssh -0 ~/.ssh/id_rsa raichel@$STAGING_IP bash -c "'
         cd /home/raichel/wordpress/docker-compose/ &&
         docker-compose down &&
         docker-compose up -d
