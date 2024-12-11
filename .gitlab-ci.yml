@@ -9,6 +9,9 @@ before_script:
 
 deploy_staging:
   stage: deploy
+  tags:
+    - job1run1
+
   script:
     - echo "Deploying to the staging server..."
     - mkdir -p ~/.ssh
