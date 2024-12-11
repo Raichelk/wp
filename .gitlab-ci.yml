@@ -51,7 +51,7 @@ deploy_production:
     # chmod 644 ~/.ssh/known_hosts
     #- ssh-keyscan -H $PRODUCTION_IP >> ~/.ssh/known_hosts
     - eval $(ssh-agent -s)
-    - echo "$PRODUCTION_SSH_KEY" | ssh-add
+    - echo "$PRODUCTION_SSH_KEY" | ssh-add -
     # ssh-add ~/.ssh/id_rsa
   # - ssh-add -l
   
