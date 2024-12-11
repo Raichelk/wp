@@ -43,26 +43,27 @@ deploy_production:
     - job30
   script:
     - echo "Deploying to the production server..."
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
+    #  mkdir -p ~/.ssh
+    #  chmod 700 ~/.ssh
     - echo "$PRODUCTION_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - touch ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
+    # chmod 600 ~/.ssh/id_rsa
+    # touch ~/.ssh/known_hosts
+    # chmod 644 ~/.ssh/known_hosts
     #- ssh-keyscan -H $PRODUCTION_IP >> ~/.ssh/known_hosts
     - eval $(ssh-agent -s)
-    - ssh-add ~/.ssh/id_rsa
-    - ssh-add -l
-    - tail -f /dev/null
+    - echo "$PRODUCTION_SSH_KEY" | ssh-add
+    # ssh-add ~/.ssh/id_rsa
+  # - ssh-add -l
+  
     # echo "Copying files to the production server..."
-    # scp -o StrictHostKeyChecking=no docker-compose.yml raichel@$PRODUCTION_IP:/home/raichel/wordpress/
-    # scp -o StrictHostKeyChecking=no nginx.conf raichel@$PRODUCTION_IP:/home/raichel/wordpress/
-    # echo "Executing docker-compose.yml on the production server..."
-    # ssh -o StrictHostKeyChecking=no raichel@$PRODUCTION_IP bash -c "'
-    #    cd /home/raichel/wordpress/ &&
-    #    docker-compose down &&
-    #    docker-compose up -d
-    #  '"
+    - scp -o StrictHostKeyChecking=no docker-compose.yml raichel@$PRODUCTION_IP:/home/raichel/wordpress/
+    - scp -o StrictHostKeyChecking=no nginx.conf raichel@$PRODUCTION_IP:/home/raichel/wordpress/
+    - echo "Executing docker-compose.yml on the production server..."
+    - ssh -o StrictHostKeyChecking=no raichel@$PRODUCTION_IP bash -c "'
+        cd /home/raichel/wordpress/ &&
+        docker-compose down &&
+        docker-compose up -d
+      '"
 
       
   only:
