@@ -4,13 +4,15 @@ stages:
 variables:
   DOCKER_IMAGE: mijewelmj/new-wordpress-image:latest
 
+
+
+
 before_script:
   - apt-get update && apt-get install -y docker.io
 
 deploy_staging:
   stage: deploy
-  tags:
-    - job1run1
+
 
   script:
     - echo "Deploying to the staging server..."
@@ -37,6 +39,8 @@ deploy_staging:
   when: manual 
 deploy_production:
   stage: deploy
+  tags:
+    - job1run1
   script:
     - echo "Deploying to the production server..."
     - mkdir -p ~/.ssh
