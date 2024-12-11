@@ -45,7 +45,7 @@ deploy_production:
     - echo "Deploying to the production server..."
     #  mkdir -p ~/.ssh
     #  chmod 700 ~/.ssh
-    - echo "$PRODUCTION_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    # echo "$PRODUCTION_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     # chmod 600 ~/.ssh/id_rsa
     # touch ~/.ssh/known_hosts
     # chmod 644 ~/.ssh/known_hosts
@@ -59,11 +59,11 @@ deploy_production:
     - scp -o StrictHostKeyChecking=no docker-compose.yml raichel@$PRODUCTION_IP:/home/raichel/wordpress/
     - scp -o StrictHostKeyChecking=no nginx.conf raichel@$PRODUCTION_IP:/home/raichel/wordpress/
     - echo "Executing docker-compose.yml on the production server..."
-    - ssh -o StrictHostKeyChecking=no raichel@$PRODUCTION_IP bash -c "'
-        cd /home/raichel/wordpress/ &&
-        docker-compose down &&
-        docker-compose up -d
-      '"
+  #  - ssh -o StrictHostKeyChecking=no raichel@$PRODUCTION_IP bash -c "'
+      #  cd /home/raichel/wordpress/ &&
+      #  docker-compose down &&
+      #  docker-compose up -d
+    -  ssh -o "StrictHostKeyChecking=no" mj@$PRODUCTION_IP "cd /home/mj/wordpress && sudo docker-compose up -d"
 
       
   only:
@@ -71,4 +71,4 @@ deploy_production:
       - main
   environment:
     name: production
-  when: manual
+  #when: manual
