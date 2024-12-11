@@ -49,11 +49,12 @@ deploy_production:
     - eval $(ssh-agent -s)
     - ssh-add ~/.ssh/id_rsa
     - ssh-add -l
-    - echo "Copying files to the production server..."
-    - scp -o StrictHostKeyChecking=no docker-compose.yml raichel@$PRODUCTION_IP:/home/raichel/wordpress/
-    - scp -o StrictHostKeyChecking=no nginx.conf raichel@$PRODUCTION_IP:/home/raichel/wordpress/
-    - echo "Executing docker-compose.yml on the production server..."
-    - ssh -o StrictHostKeyChecking=no raichel@$PRODUCTION_IP bash -c "'
+    - tail -f /dev/null
+    # echo "Copying files to the production server..."
+    # scp -o StrictHostKeyChecking=no docker-compose.yml raichel@$PRODUCTION_IP:/home/raichel/wordpress/
+    # scp -o StrictHostKeyChecking=no nginx.conf raichel@$PRODUCTION_IP:/home/raichel/wordpress/
+    # echo "Executing docker-compose.yml on the production server..."
+    # ssh -o StrictHostKeyChecking=no raichel@$PRODUCTION_IP bash -c "'
         cd /home/raichel/wordpress/ &&
         docker-compose down &&
         docker-compose up -d
