@@ -53,7 +53,7 @@ deploy_production:
     - eval $(ssh-agent -s)
     - echo "$PRODUCTION_SSH_KEY" | ssh-add -
    # - ssh-add -l
-    
+    - ssh -o "StrictHostKeyChecking=no" raichel@$PRODUCTION_IP "mkdir -p /home/raichel/wordpress"
     - scp -o "StrictHostKeyChecking=no" docker-compose.yml raichel@$PRODUCTION_IP:/home/raichel/wordpress
     - scp -o "StrictHostKeyChecking=no" nginx.conf raichel@$PRODUCTION_IP:/home/raichel/wordpress
     - echo "Executing docker-compose.yml on the production server..."
