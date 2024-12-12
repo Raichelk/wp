@@ -34,8 +34,8 @@ deploy_staging:
    #     docker-compose down &&
    #     docker-compose up -d
    #   '"
-    - echo "$SUDO_PASSWORD" | ssh -o "StrictHostKeyChecking=no" raichel@$STAGING_IP "cd /home/raichel/wordpress && echo $SUDO_PASSWORD | sudo -S docker-compose up -d"
-   # -  ssh -o "StrictHostKeyChecking=no" raichel@$STAGING_IP "cd /home/raichel/wordpress && sudo docker-compose up -d"
+   # - echo "$SUDO_PASSWORD" | ssh -o "StrictHostKeyChecking=no" raichel@$STAGING_IP "cd /home/raichel/wordpress && echo $SUDO_PASSWORD | sudo -S docker-compose up -d"
+    -  ssh -o "StrictHostKeyChecking=no" raichel@$STAGING_IP "cd /home/raichel/wordpress && sudo docker-compose up -d"
   only:
     refs:
       - staging
