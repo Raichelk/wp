@@ -29,13 +29,8 @@ deploy_staging:
     - scp -o "StrictHostKeyChecking=no" docker-compose.yml raichel@$STAGING_IP:/home/raichel/wordpress
     - scp -o "StrictHostKeyChecking=no" nginx.conf raichel@$STAGING_IP:/home/raichel/wordpress
     - echo "Executing docker-compose.yml on the staging server..."
-   # - ssh -o "StrictHostKeyChecking=no" mj@$STAGING_IP "'
-   #     cd /home/mj/wordpress/ &&
-   #     docker-compose down &&
-   #     docker-compose up -d
-   #   '"
    # - echo "$SUDO_PASSWORD" | ssh -o "StrictHostKeyChecking=no" raichel@$STAGING_IP "cd /home/raichel/wordpress && echo $SUDO_PASSWORD | sudo -S docker-compose up -d"
-    -  ssh -o "StrictHostKeyChecking=no" raichel@$STAGING_IP "cd /home/raichel/wordpress && sudo docker-compose up -d"
+    - ssh -o "StrictHostKeyChecking=no" raichel@$STAGING_IP "cd /home/raichel/wordpress && sudo docker-compose up -d"
   only:
     refs:
       - staging
@@ -57,19 +52,8 @@ deploy_production:
     - scp -o "StrictHostKeyChecking=no" docker-compose.yml raichel@$PRODUCTION_IP:/home/raichel/wordpress
     - scp -o "StrictHostKeyChecking=no" nginx.conf raichel@$PRODUCTION_IP:/home/raichel/wordpress
     - echo "Executing docker-compose.yml on the production server..."
-   # - ssh -o "StrictHostKeyChecking=no" mj@$PRODUCTION_IP "'
-   #     cd /home/mj/wordpress/ &&
-   #     docker-compose down &&
-   #     docker-compose up -d
-   #   '"
-   # - ssh -o "StrictHostKeyChecking=no" raichel@$PRODUCTION_IP "
-   #     cd /home/raichel/wordpress &&
-   #     sudo docker-compose down &&
-    #    sudo docker-compose up -d
-     # "
-
-   # - echo "$SUDO_PASSWORD" | ssh -o "StrictHostKeyChecking=no" raichel@$PRODUCTION_IP "cd /home/raichel/wordpress && echo $SUDO_PASSWORD | sudo -S docker-compose up -d"
-    -  ssh -o "StrictHostKeyChecking=no" raichel@$PRODUCTION_IP "cd /home/raichel/wordpress && sudo docker-compose up -d"
+      # - echo "$SUDO_PASSWORD" | ssh -o "StrictHostKeyChecking=no" raichel@$PRODUCTION_IP "cd /home/raichel/wordpress && echo $SUDO_PASSWORD | sudo -S docker-compose up -d"
+    - ssh -o "StrictHostKeyChecking=no" raichel@$PRODUCTION_IP "cd /home/raichel/wordpress && sudo docker-compose up -d"
   only:
     refs:
       - main
