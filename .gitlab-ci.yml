@@ -67,7 +67,7 @@ deploy_production:
     #    sudo docker-compose up -d
      # "
     
-    -  ssh -o "StrictHostKeyChecking=no" raichel@$PRODUCTION_IP "cd /home/raichel/wordpress && sudo docker-compose up -d"
+    -  ssh -o "StrictHostKeyChecking=no" raichel@$PRODUCTION_IP "cd /home/raichel/wordpress && docker-compose up -d"
   only:
     refs:
       - main
