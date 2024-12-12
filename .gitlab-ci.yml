@@ -47,30 +47,18 @@ deploy_production:
   tags:
     - job30
   script:
-    #- mkdir -p ~/.ssh
-    #- echo "$PRODUCTION_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
-    #- chmod 600 ~/.ssh/id_rsa
-   # - chown -R raichel:raichel /home/raichel/wordpress
+    
     - eval $(ssh-agent -s)
     - echo "$PRODUCTION_SSH_KEY" | ssh-add -
    # - ssh-add -l
     - scp -o "StrictHostKeyChecking=no" docker-compose.yml raichel@$PRODUCTION_IP:/home/raichel/wordpress
     - scp -o "StrictHostKeyChecking=no" nginx.conf raichel@$PRODUCTION_IP:/home/raichel/wordpress
     - echo "Executing docker-compose.yml on the production server..."
-   # - ssh -o "StrictHostKeyChecking=no" mj@$PRODUCTION_IP "'
-   #     cd /home/mj/wordpress/ &&
-   #     docker-compose down &&
-   #     docker-compose up -d
-   #   '"
-   # - ssh -o "StrictHostKeyChecking=no" raichel@$PRODUCTION_IP "
-   #     cd /home/raichel/wordpress &&
-   #     sudo docker-compose down &&
-    #    sudo docker-compose up -d
-     # "
+   
     
-    -    echo "$SUDO_PASSWORD" | ssh -o "StrictHostKeyChecking=no" raichel@$PRODUCTION_IP "cd /home/raichel/wordpress && echo $SUDO_PASSWORD | sudo -S docker-compose up -d"
+    #    echo "$SUDO_PASSWORD" | ssh -o "StrictHostKeyChecking=no" raichel@$PRODUCTION_IP "cd /home/raichel/wordpress && echo $SUDO_PASSWORD | sudo -S docker-compose up -d"
 
-#    -  ssh -o "StrictHostKeyChecking=no" raichel@$PRODUCTION_IP "cd /home/raichel/wordpress && sudo docker-compose up -d"
+    -  ssh -o "StrictHostKeyChecking=no" raichel@$PRODUCTION_IP "cd /home/raichel/wordpress && sudo docker-compose up -d"
   only:
     refs:
       - main
