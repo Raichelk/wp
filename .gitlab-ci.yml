@@ -64,4 +64,4 @@ deploy_production:
       - main
   environment:
     name: production
-  #when: manual
+  when: manual
